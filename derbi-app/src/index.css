@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@theme {
+  --color-royal-gold: #D4AF37;
+  --color-royal-gold-light: #FDE047;
+  --color-royal-gold-dark: #B8860B;
+
+  --color-pitch-black: #000000;
+  --color-pitch-950: #0a0a0a;
+  --color-pitch-900: #111111;
+  --color-pitch-800: #1a1a1a;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-pitch-black);
+    color: #f3f4f6;
+    /* gray-100 */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-serif);
+    color: var(--color-royal-gold);
+    letter-spacing: 0.025em;
+  }
+}
+
+/* Custom Utilities for smooth animations */
+@layer utilities {
+  .clip-text-gold {
+    background: linear-gradient(135deg, var(--color-royal-gold-light) 0%, var(--color-royal-gold) 50%, var(--color-royal-gold-dark) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+/* Hide Unicorn Studio Badge */
+a[href*="unicorn.studio"],
+a[href*="unicornstudio"],
+.unicorn-studio-badge,
+[class*="unicorn-badge"] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
