@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import PropTypes from 'prop-types';
 import { motion, useInView } from 'framer-motion';
 
 const stats = [
@@ -47,7 +48,12 @@ const AnimatedNumber = ({ target, inView }) => {
     return <span>{count.toLocaleString()}</span>;
 };
 
-const StatItem = ({ stat, index, isInView, delay, isLast }) => (
+AnimatedNumber.propTypes = {
+    target: PropTypes.number.isRequired,
+    inView: PropTypes.bool.isRequired
+};
+
+const StatItem = ({ stat, isInView, delay, isLast }) => (
     <motion.div
         className={`flex-1 text-center py-4 px-3 ${!isLast ? 'border-r border-white/10' : ''}`}
         initial={{ opacity: 0, y: 20 }}
@@ -62,6 +68,16 @@ const StatItem = ({ stat, index, isInView, delay, isLast }) => (
         </p>
     </motion.div>
 );
+
+StatItem.propTypes = {
+    stat: PropTypes.shape({
+        value: PropTypes.number.isRequired,
+        label: PropTypes.string.isRequired
+    }).isRequired,
+    isInView: PropTypes.bool.isRequired,
+    delay: PropTypes.number.isRequired,
+    isLast: PropTypes.bool.isRequired
+};
 
 export const ImpactStats = () => {
     const sectionRef = useRef(null);
@@ -89,7 +105,6 @@ export const ImpactStats = () => {
                         <StatItem
                             key={stat.label}
                             stat={stat}
-                            index={i}
                             isInView={isInView}
                             delay={i * 0.08}
                             isLast={i === stats.length - 1}
@@ -105,7 +120,6 @@ export const ImpactStats = () => {
                         <StatItem
                             key={stat.label}
                             stat={stat}
-                            index={i}
                             isInView={isInView}
                             delay={0.4 + i * 0.08}
                             isLast={i === statsRow2.length - 1}

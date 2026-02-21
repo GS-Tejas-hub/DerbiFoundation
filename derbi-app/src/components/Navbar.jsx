@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
 
@@ -103,6 +104,17 @@ const NavItem = ({ title, path, dropdownItems, mobile, setIsMenuOpen }) => {
             )}
         </div>
     );
+};
+
+NavItem.propTypes = {
+    title: PropTypes.string.isRequired,
+    path: PropTypes.string,
+    dropdownItems: PropTypes.arrayOf(PropTypes.shape({
+        title: PropTypes.string.isRequired,
+        path: PropTypes.string.isRequired
+    })),
+    mobile: PropTypes.bool,
+    setIsMenuOpen: PropTypes.func
 };
 
 const Navbar = () => {

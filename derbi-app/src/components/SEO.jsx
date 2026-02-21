@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet-async';
 
 const SEO = ({ title, description, keywords }) => {
@@ -27,6 +27,12 @@ const SEO = ({ title, description, keywords }) => {
             <meta name="theme-color" content="#000000" />
         </Helmet>
     );
+};
+
+SEO.propTypes = {
+    title: PropTypes.string,
+    description: PropTypes.string,
+    keywords: PropTypes.string
 };
 
 export default SEO;

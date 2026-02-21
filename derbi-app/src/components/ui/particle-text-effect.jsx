@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import PropTypes from 'prop-types';
 
 class Particle {
     constructor() {
@@ -406,7 +407,8 @@ export function ParticleTextEffect({ words, onSequenceComplete }) {
             if (animationRef.current) cancelAnimationFrame(animationRef.current);
             window.removeEventListener("resize", updateSize);
         };
-    }, [words]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
@@ -414,3 +416,8 @@ export function ParticleTextEffect({ words, onSequenceComplete }) {
         </div>
     );
 }
+
+ParticleTextEffect.propTypes = {
+    words: PropTypes.arrayOf(PropTypes.string).isRequired,
+    onSequenceComplete: PropTypes.func
+};

@@ -1,4 +1,5 @@
 import * as React from "react";
+import PropTypes from 'prop-types';
 import { motion } from "framer-motion";
 
 export const HoverTextGlow = ({
@@ -97,4 +98,9 @@ export const HoverTextGlow = ({
             </svg>
         </div>
     );
+};
+
+HoverTextGlow.propTypes = {
+    text: PropTypes.string,
+    duration: PropTypes.number
 };

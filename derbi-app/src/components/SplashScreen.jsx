@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
+import PropTypes from 'prop-types';
 import { ParticleTextEffect } from './ui/particle-text-effect';
 
 const SplashScreen = ({ onComplete }) => {
@@ -43,6 +44,10 @@ const SplashScreen = ({ onComplete }) => {
             />
         </div>
     );
+};
+
+SplashScreen.propTypes = {
+    onComplete: PropTypes.func.isRequired
 };
 
 export default SplashScreen;

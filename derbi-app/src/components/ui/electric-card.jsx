@@ -1,121 +1,122 @@
 "use client";
 
-import React, { useMemo } from "react";
+import { useMemo } from "react";
+import PropTypes from 'prop-types';
 
 
 export const ElectricCard = ({
-    variant = "swirl",
-    color = "#D4AF37", // Default to Derbi Royal Gold
-    badge = "Innovation",
-    title = "",
-    description = "",
-    width = "100%",
-    aspectRatio = "4 / 3",
-    className = "",
-    children,
+  variant = "swirl",
+  color = "#D4AF37", // Default to Derbi Royal Gold
+  badge = "Innovation",
+  title = "",
+  description = "",
+  width = "100%",
+  aspectRatio = "4 / 3",
+  className = "",
+  children,
 }) => {
-    const ids = useMemo(() => {
-        const key = Math.random().toString(36).slice(2, 8);
-        return {
-            swirl: `swirl-${key}`,
-            hue: `hue-${key}`,
-        };
-    }, []);
+  const ids = useMemo(() => {
+    const key = Math.random().toString(36).slice(2, 8);
+    return {
+      swirl: `swirl-${key}`,
+      hue: `hue-${key}`,
+    };
+  }, []);
 
-    const filterURL = variant === "hue" ? `url(#${ids.hue})` : `url(#${ids.swirl})`;
+  const filterURL = variant === "hue" ? `url(#${ids.hue})` : `url(#${ids.swirl})`;
 
-    return (
-        <div className={`ec-wrap w-full h-full ${className}`}>
-            <svg className="svg-container" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <defs>
-                    <filter id={ids.swirl} colorInterpolationFilters="sRGB" x="-20%" y="-20%" width="140%" height="140%">
-                        <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="1" />
-                        <feOffset in="noise1" dx="0" dy="0" result="offsetNoise1">
-                            <animate attributeName="dy" values="700; 0" dur="6s" repeatCount="indefinite" calcMode="linear" />
-                        </feOffset>
+  return (
+    <div className={`ec-wrap w-full h-full ${className}`}>
+      <svg className="svg-container" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <filter id={ids.swirl} colorInterpolationFilters="sRGB" x="-20%" y="-20%" width="140%" height="140%">
+            <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="1" />
+            <feOffset in="noise1" dx="0" dy="0" result="offsetNoise1">
+              <animate attributeName="dy" values="700; 0" dur="6s" repeatCount="indefinite" calcMode="linear" />
+            </feOffset>
 
-                        <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="1" />
-                        <feOffset in="noise2" dx="0" dy="0" result="offsetNoise2">
-                            <animate attributeName="dy" values="0; -700" dur="6s" repeatCount="indefinite" calcMode="linear" />
-                        </feOffset>
+            <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="1" />
+            <feOffset in="noise2" dx="0" dy="0" result="offsetNoise2">
+              <animate attributeName="dy" values="0; -700" dur="6s" repeatCount="indefinite" calcMode="linear" />
+            </feOffset>
 
-                        <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise3" seed="2" />
-                        <feOffset in="noise3" dx="0" dy="0" result="offsetNoise3">
-                            <animate attributeName="dx" values="490; 0" dur="6s" repeatCount="indefinite" calcMode="linear" />
-                        </feOffset>
+            <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise3" seed="2" />
+            <feOffset in="noise3" dx="0" dy="0" result="offsetNoise3">
+              <animate attributeName="dx" values="490; 0" dur="6s" repeatCount="indefinite" calcMode="linear" />
+            </feOffset>
 
-                        <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise4" seed="2" />
-                        <feOffset in="noise4" dx="0" dy="0" result="offsetNoise4">
-                            <animate attributeName="dx" values="0; -490" dur="6s" repeatCount="indefinite" calcMode="linear" />
-                        </feOffset>
+            <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise4" seed="2" />
+            <feOffset in="noise4" dx="0" dy="0" result="offsetNoise4">
+              <animate attributeName="dx" values="0; -490" dur="6s" repeatCount="indefinite" calcMode="linear" />
+            </feOffset>
 
-                        <feComposite in="offsetNoise1" in2="offsetNoise2" result="part1" />
-                        <feComposite in="offsetNoise3" in2="offsetNoise4" result="part2" />
-                        <feBlend in="part1" in2="part2" mode="color-dodge" result="combinedNoise" />
+            <feComposite in="offsetNoise1" in2="offsetNoise2" result="part1" />
+            <feComposite in="offsetNoise3" in2="offsetNoise4" result="part2" />
+            <feBlend in="part1" in2="part2" mode="color-dodge" result="combinedNoise" />
 
-                        <feDisplacementMap
-                            in="SourceGraphic"
-                            in2="combinedNoise"
-                            scale="30"
-                            xChannelSelector="R"
-                            yChannelSelector="B"
-                        />
-                    </filter>
+            <feDisplacementMap
+              in="SourceGraphic"
+              in2="combinedNoise"
+              scale="30"
+              xChannelSelector="R"
+              yChannelSelector="B"
+            />
+          </filter>
 
-                    <filter id={ids.hue} colorInterpolationFilters="sRGB" x="-20%" y="-20%" width="140%" height="140%">
-                        <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="7" />
-                        <feColorMatrix type="hueRotate" result="pt1">
-                            <animate attributeName="values" values="0;360;" dur=".6s" repeatCount="indefinite" calcMode="paced" />
-                        </feColorMatrix>
-                        <feComposite />
-                        <feTurbulence type="turbulence" baseFrequency="0.03" numOctaves="7" seed="5" />
-                        <feColorMatrix type="hueRotate" result="pt2">
-                            <animate
-                                attributeName="values"
-                                values="0; 333; 199; 286; 64; 168; 256; 157; 360;"
-                                dur="5s"
-                                repeatCount="indefinite"
-                                calcMode="paced"
-                            />
-                        </feColorMatrix>
-                        <feBlend in="pt1" in2="pt2" mode="normal" result="combinedNoise" />
-                        <feDisplacementMap in="SourceGraphic" scale="30" xChannelSelector="R" yChannelSelector="B" />
-                    </filter>
-                </defs>
-            </svg>
+          <filter id={ids.hue} colorInterpolationFilters="sRGB" x="-20%" y="-20%" width="140%" height="140%">
+            <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="7" />
+            <feColorMatrix type="hueRotate" result="pt1">
+              <animate attributeName="values" values="0;360;" dur=".6s" repeatCount="indefinite" calcMode="paced" />
+            </feColorMatrix>
+            <feComposite />
+            <feTurbulence type="turbulence" baseFrequency="0.03" numOctaves="7" seed="5" />
+            <feColorMatrix type="hueRotate" result="pt2">
+              <animate
+                attributeName="values"
+                values="0; 333; 199; 286; 64; 168; 256; 157; 360;"
+                dur="5s"
+                repeatCount="indefinite"
+                calcMode="paced"
+              />
+            </feColorMatrix>
+            <feBlend in="pt1" in2="pt2" mode="normal" result="combinedNoise" />
+            <feDisplacementMap in="SourceGraphic" scale="30" xChannelSelector="R" yChannelSelector="B" />
+          </filter>
+        </defs>
+      </svg>
 
-            <div className="card-container w-full h-full" style={{ ["--electric-border-color"]: color, ["--f"]: filterURL }}>
-                <div className="inner-container w-full h-full">
-                    <div className="border-outer w-full h-full">
-                        <div className="main-card w-full h-full" />
-                    </div>
-                    <div className="glow-layer-1" />
-                    <div className="glow-layer-2" />
-                </div>
+      <div className="card-container w-full h-full" style={{ ["--electric-border-color"]: color, ["--f"]: filterURL }}>
+        <div className="inner-container w-full h-full">
+          <div className="border-outer w-full h-full">
+            <div className="main-card w-full h-full" />
+          </div>
+          <div className="glow-layer-1" />
+          <div className="glow-layer-2" />
+        </div>
 
-                <div className="overlay-1" />
-                <div className="overlay-2" />
-                <div className="background-glow" />
+        <div className="overlay-1" />
+        <div className="overlay-2" />
+        <div className="background-glow" />
 
-                <div className="content-container z-10">
-                    {children ? (
-                        children
-                    ) : (
-                        <>
-                            <div className="content-top">
-                                {badge && <div className="scrollbar-glass">{badge}</div>}
-                                {title && <p className="title">{title}</p>}
-                            </div>
-                            {(title || badge) && description && <hr className="divider" />}
-                            <div className="content-bottom">
-                                {description && <p className="description">{description}</p>}
-                            </div>
-                        </>
-                    )}
-                </div>
-            </div>
+        <div className="content-container z-10">
+          {children ? (
+            children
+          ) : (
+            <>
+              <div className="content-top">
+                {badge && <div className="scrollbar-glass">{badge}</div>}
+                {title && <p className="title">{title}</p>}
+              </div>
+              {(title || badge) && description && <hr className="divider" />}
+              <div className="content-bottom">
+                {description && <p className="description">{description}</p>}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
 
-            <style jsx="true">{`
+      <style>{`
         :root {
           --color-neutral-900: oklch(0.145 0 0); /* Match Derbi pitch-black closely */
         }
@@ -281,8 +282,20 @@ export const ElectricCard = ({
           -webkit-mask-image: linear-gradient(to right, transparent, black, transparent);
         }
       `}</style>
-        </div>
-    );
+    </div>
+  );
+};
+
+ElectricCard.propTypes = {
+  variant: PropTypes.string,
+  color: PropTypes.string,
+  badge: PropTypes.string,
+  title: PropTypes.string,
+  description: PropTypes.string,
+  width: PropTypes.string,
+  aspectRatio: PropTypes.string,
+  className: PropTypes.string,
+  children: PropTypes.node
 };
 
 export default ElectricCard;

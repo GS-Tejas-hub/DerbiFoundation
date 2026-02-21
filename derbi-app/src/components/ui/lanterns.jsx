@@ -249,9 +249,7 @@ export function ShaderCanvas({ fragSource = SHADER_SRC, pixelRatio }) {
             canvas.removeEventListener("webglcontextlost", onContextLost);
             canvas.removeEventListener("webglcontextrestored", onContextRestored);
             ro.disconnect();
-            // eslint-disable-next-line no-empty
             try { gl.deleteBuffer(vbo); } catch { /* ignore */ }
-            // eslint-disable-next-line no-empty
             try { gl.deleteVertexArray(vao); } catch { /* ignore */ }
         }
 

@@ -1,4 +1,5 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
+import PropTypes from 'prop-types';
 import { motion, useInView } from 'framer-motion';
 import {
     Building2,
@@ -140,6 +141,17 @@ const TimelineNode = ({ item, index, isInView }) => {
             </div>
         </div>
     );
+};
+
+TimelineNode.propTypes = {
+    item: PropTypes.shape({
+        year: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired,
+        icon: PropTypes.elementType.isRequired,
+        position: PropTypes.oneOf(['top', 'bottom']).isRequired
+    }).isRequired,
+    index: PropTypes.number.isRequired,
+    isInView: PropTypes.bool.isRequired
 };
 
 export const DerbiTimeline = () => {

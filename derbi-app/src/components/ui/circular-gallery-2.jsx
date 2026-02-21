@@ -10,6 +10,7 @@ import {
     Transform,
 } from "ogl";
 import { useEffect, useRef } from "react";
+import PropTypes from 'prop-types';
 
 /* --------------------------------
 * OGL Helper Utilities
@@ -570,6 +571,19 @@ const CircularGallery = ({
             {...props}
         />
     );
+};
+
+CircularGallery.propTypes = {
+    items: PropTypes.arrayOf(PropTypes.shape({
+        image: PropTypes.string,
+        text1: PropTypes.string,
+        text2: PropTypes.string
+    })),
+    bend: PropTypes.number,
+    borderRadius: PropTypes.number,
+    scrollSpeed: PropTypes.number,
+    scrollEase: PropTypes.number,
+    className: PropTypes.string
 };
 
 export { CircularGallery };
