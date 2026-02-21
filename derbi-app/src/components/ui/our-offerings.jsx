@@ -94,10 +94,8 @@ const OfferingCard = ({ item, index, isInView }) => {
 
 OfferingCard.propTypes = {
     item: PropTypes.shape({
-        id: PropTypes.number.isRequired,
         title: PropTypes.string.isRequired,
-        description: PropTypes.string.isRequired,
-        lottie: PropTypes.object.isRequired,
+        lottie: PropTypes.string.isRequired,
     }).isRequired,
     index: PropTypes.number.isRequired,
     isInView: PropTypes.bool.isRequired,

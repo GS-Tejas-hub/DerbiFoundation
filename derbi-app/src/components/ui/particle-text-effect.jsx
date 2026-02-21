@@ -19,15 +19,16 @@ class Particle {
         this.targetColor = { r: 0, g: 0, b: 0 };
         this.colorWeight = 0;
         this.colorBlendRate = 0.01;
+        this.currentColorStr = null;
     }
 
     move() {
         // Check if particle has settled (very close to target and barely moving)
-        const distance = Math.sqrt(
-            Math.pow(this.pos.x - this.target.x, 2) + Math.pow(this.pos.y - this.target.y, 2)
-        );
+        const dx = this.target.x - this.pos.x;
+        const dy = this.target.y - this.pos.y;
+        const distSq = dx * dx + dy * dy;
 
-        if (!this.isKilled && distance < 1.5 && Math.abs(this.vel.x) < 0.1 && Math.abs(this.vel.y) < 0.1) {
+        if (!this.isKilled && distSq < 2.25 && Math.abs(this.vel.x) < 0.1 && Math.abs(this.vel.y) < 0.1) {
             // Snap to target and stop - no jittering
             this.pos.x = this.target.x;
             this.pos.y = this.target.y;
@@ -42,35 +43,34 @@ class Particle {
         this.settled = false;
 
         let proximityMult = 1;
-        if (distance < this.closeEnoughTarget) {
-            proximityMult = distance / this.closeEnoughTarget;
+        const closeSq = this.closeEnoughTarget * this.closeEnoughTarget;
+        if (distSq < closeSq) {
+            proximityMult = Math.sqrt(distSq) / this.closeEnoughTarget;
         }
 
-        const towardsTarget = {
-            x: this.target.x - this.pos.x,
-            y: this.target.y - this.pos.y,
-        };
+        const magnitude = Math.sqrt(distSq);
+        let towardsTargetX = dx;
+        let towardsTargetY = dy;
 
-        const magnitude = Math.sqrt(towardsTarget.x * towardsTarget.x + towardsTarget.y * towardsTarget.y);
         if (magnitude > 0) {
-            towardsTarget.x = (towardsTarget.x / magnitude) * this.maxSpeed * proximityMult;
-            towardsTarget.y = (towardsTarget.y / magnitude) * this.maxSpeed * proximityMult;
+            towardsTargetX = (dx / magnitude) * this.maxSpeed * proximityMult;
+            towardsTargetY = (dy / magnitude) * this.maxSpeed * proximityMult;
         }
 
-        const steer = {
-            x: towardsTarget.x - this.vel.x,
-            y: towardsTarget.y - this.vel.y,
-        };
+        let steerX = towardsTargetX - this.vel.x;
+        let steerY = towardsTargetY - this.vel.y;
 
-        const steerMagnitude = Math.sqrt(steer.x * steer.x + steer.y * steer.y);
-        if (steerMagnitude > 0) {
-            steer.x = (steer.x / steerMagnitude) * this.maxForce;
-            steer.y = (steer.y / steerMagnitude) * this.maxForce;
+        const steerSq = steerX * steerX + steerY * steerY;
+        const maxForceSq = this.maxForce * this.maxForce;
+
+        if (steerSq > maxForceSq) {
+            const steerMagnitude = Math.sqrt(steerSq);
+            steerX = (steerX / steerMagnitude) * this.maxForce;
+            steerY = (steerY / steerMagnitude) * this.maxForce;
         }
 
-        this.acc.x += steer.x;
-        this.acc.y += steer.y;
-
+        this.acc.x += steerX;
+        this.acc.y += steerY;
         this.vel.x += this.acc.x;
         this.vel.y += this.acc.y;
         this.pos.x += this.vel.x;
@@ -82,15 +82,17 @@ class Particle {
     draw(ctx) {
         if (this.colorWeight < 1.0) {
             this.colorWeight = Math.min(this.colorWeight + this.colorBlendRate, 1.0);
+
+            const r = Math.round(this.startColor.r + (this.targetColor.r - this.startColor.r) * this.colorWeight);
+            const g = Math.round(this.startColor.g + (this.targetColor.g - this.startColor.g) * this.colorWeight);
+            const b = Math.round(this.startColor.b + (this.targetColor.b - this.startColor.b) * this.colorWeight);
+
+            this.currentColorStr = `rgb(${r}, ${g}, ${b})`;
+        } else if (!this.currentColorStr) {
+            this.currentColorStr = `rgb(${this.targetColor.r}, ${this.targetColor.g}, ${this.targetColor.b})`;
         }
 
-        const currentColor = {
-            r: Math.round(this.startColor.r + (this.targetColor.r - this.startColor.r) * this.colorWeight),
-            g: Math.round(this.startColor.g + (this.targetColor.g - this.startColor.g) * this.colorWeight),
-            b: Math.round(this.startColor.b + (this.targetColor.b - this.startColor.b) * this.colorWeight),
-        };
-
-        ctx.fillStyle = `rgb(${currentColor.r}, ${currentColor.g}, ${currentColor.b})`;
+        ctx.fillStyle = this.currentColorStr;
         ctx.fillRect(this.pos.x, this.pos.y, 2, 2);
     }
 
@@ -114,6 +116,7 @@ class Particle {
             };
             this.targetColor = { r: 0, g: 0, b: 0 };
             this.colorWeight = 0;
+            this.currentColorStr = null;
 
             this.isKilled = true;
         }
@@ -141,8 +144,6 @@ export function ParticleTextEffect({ words, onSequenceComplete }) {
     // Keep refs in sync
     stateRef.current = { words, onSequenceComplete };
 
-    const pixelSteps = 3; // Denser sampling = more particles = higher intensity
-
     const getHoldDuration = (index) => {
         if (index === 0) return 1650;  // Hello (was 810)
         if (index === 1) return 1250;  // Welcome To (was 990)
@@ -166,6 +167,10 @@ export function ParticleTextEffect({ words, onSequenceComplete }) {
     };
 
     const formWord = (word, canvas) => {
+        let localPixelSteps = 3;
+        if (canvas.width < 768) localPixelSteps = 4;
+        if (canvas.width < 480) localPixelSteps = 5;
+
         const offscreenCanvas = document.createElement("canvas");
         offscreenCanvas.width = canvas.width;
         offscreenCanvas.height = canvas.height;
@@ -211,7 +216,7 @@ export function ParticleTextEffect({ words, onSequenceComplete }) {
 
         // Collect all target coordinates
         const coordsIndexes = [];
-        for (let i = 0; i < pixels.length; i += pixelSteps * 4) {
+        for (let i = 0; i < pixels.length; i += localPixelSteps * 4) {
             coordsIndexes.push(i);
         }
 
@@ -262,6 +267,7 @@ export function ParticleTextEffect({ words, onSequenceComplete }) {
                 };
                 particle.targetColor = newColor;
                 particle.colorWeight = 0;
+                particle.currentColorStr = null;
                 particle.target.x = x;
                 particle.target.y = y;
             }
@@ -306,7 +312,8 @@ export function ParticleTextEffect({ words, onSequenceComplete }) {
                     particle.pos.x < -50 || particle.pos.x > canvas.width + 50 ||
                     particle.pos.y < -50 || particle.pos.y > canvas.height + 50
                 ) {
-                    particles.splice(i, 1);
+                    particles[i] = particles[particles.length - 1];
+                    particles.pop();
                 }
             }
         }
@@ -315,10 +322,16 @@ export function ParticleTextEffect({ words, onSequenceComplete }) {
         const currentWordIdx = wordIndexRef.current;
 
         if (phaseRef.current === "forming") {
-            // Check if most particles have settled
-            const aliveParticles = particles.filter(p => !p.isKilled);
-            const settledCount = aliveParticles.filter(p => p.settled).length;
-            const settledRatio = aliveParticles.length > 0 ? settledCount / aliveParticles.length : 0;
+            // Check if most particles have settled without GC allocations (.filter)
+            let aliveCount = 0;
+            let settledCount = 0;
+            for (let i = 0; i < particles.length; i++) {
+                if (!particles[i].isKilled) {
+                    aliveCount++;
+                    if (particles[i].settled) settledCount++;
+                }
+            }
+            const settledRatio = aliveCount > 0 ? settledCount / aliveCount : 0;
 
             // Once 95%+ settled AND minimum 540ms has passed, switch to holding
             if ((settledRatio > 0.95 && phaseElapsed > 540) || phaseElapsed > 1350) {
